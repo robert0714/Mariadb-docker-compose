@@ -1,0 +1,39 @@
+version: "3.1"
+services:
+  mariadb:
+    container_name: mariadb   
+    image: mariadb:10.11
+    # user: root
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "./passwordreset.sql:/docker-entrypoint-initdb.d/SCHEMA.sql"
+      - $PWD/datadir:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=example
+      - MARIADB_USER=example-user
+      - TZ=Asia/Taipei
+    network_mode:  "host"
+    #ports:
+    #  - "3306:3306"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          # memory: '16'
+  tomcat:
+    restart: always
+    image: tomcat:9.0-jdk8
+    container_name: tomcat
+    network_mode:  "host"    
+    #ports:
+    #  - 8086:8080
+    environment:
+    - TZ=Asia/Taipei
+    volumes:
+    - $PWD/tomcat/webapps:/usr/local/tomcat/webapps
+    - $PWD/tomcat/logs:/usr/local/tomcat/logs
+    - $PWD/tomcat/conf/server.xml:/usr/local/tomcat/conf/server.xml
+
+
+
